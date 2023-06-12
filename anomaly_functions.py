@@ -83,5 +83,35 @@ def identify_lower_outliers(data, csv_file, multiplier=1.5):
             # You can modify this part of the code to reflect your decision-making process
 
         print("=" * 50)
+        
+def identify_upper_outliers(data, csv_file, multiplier=1.5):
+    # Load the CSV file
+    data = pd.read_csv(csv_file)
+    data = filter_numeric_columns(data)
+
+    # Calculate the lower and upper bounds for each column
+    upper_bounds = data.quantile(0.75) + (multiplier * (data.quantile(0.75) - data.quantile(0.25)))
+
+    # Identify upper outliers
+    outliers = {}
+    for column in data.columns:
+        column_outliers = data[data[column] > upper_bounds[column]]
+        outliers[column] = column_outliers
+
+    # Print outlier summary and suggest which outliers to keep
+    for column, column_outliers in outliers.items():
+        print(f"Column: {column}")
+        print(f"Upper bound: {upper_bounds[column]}")
+        print("Outliers:")
+        print(column_outliers)
+        print()
+
+        if column_outliers.empty:
+            print("No outliers found in this column.")
+        else:
+            print("Suggested outliers to keep:")
+
+
+        print("=" * 50)
 
 # ------------------------------------------------------------------------------------------------------
